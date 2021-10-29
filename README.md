@@ -33,3 +33,36 @@ I will create 2 models:
       - CNNs are very successful at tasks like this, and tuning one will likely produce our best results.
 
 ## **Results**
+
+Both models did well with accuracy scores of 94% and 97% respectively. Given the medical context to our problem, Recall score is more important. Recall measures the amount of False Negatives out of total real positive cases. For the CNN, recall got as low as 17/843, or 97.9%. 
+
+<img src='images/Epoch5.png'>
+
+While a 98% recall score sounds great, this model could do much better. We can see this from how it evolved during training.
+
+<img src='images/cnn_training.png'>
+
+It is evident here that for the validation set, the model did not 'learn' and progress the same way the training set did. Adjustments should be made to ensure the best possible model is trained before deployment. Here are a few take-aways from the training:
+  - Validation accuracy and number of FNs stayed fairly consistent through training. But while 96% accurate is good, not seeing any development through the models training epochs suggests that even though we have constructed a successful model, it didn't "learn" much from the data.
+  - After only a few epochs, the model began to overfit the training data and get scores of 100%. Validation scores did not improve at all throughout training.
+  - Another reason to suspect we have over-fit and over-trained this model is the increase in validatation loss as we go through more epochs. The accuracy stays the same, which means this increase in loss is a result of less certain of predictions (probabilities) of validation samples even if it is getting the same number correct.
+  - One more thing to note is that the number of False Negatives stayed the same for the second have of training (20). While it is possible these are different samples, I suspect that the model is missing the same 20 each time. Whether it is possible to properly evaluate these images is something to quesiton, along with the possibility that a local minimum in False Negatives and accuracy was found, preventing the model from learning the context to properly classify these 20 outlier samples.
+
+## **Next Steps**
+
+Moving forward in createing a deployable model, we want to take steps to reduce overfitting and increase the certainty of our predictions in the validation data. Here are some options that I would explore:
+  - Add Dropout layers to regularize training. These make the model 'forget' the values of nodes at a certain rate so they are trained again.
+  - Include more image preprocessing. This could look like adjusting brightness or contrast so the necessary features are more easily recognizable by the model.
+  - Reduce the complexity of the model by reducing the number of overall parameters. This could look like removing one or two of the 3 convolutional layers.
+  - Increase the size of the dataset by including reflected images. In doing this we would certainly reduce the image dimensions so that training does not take absurdly long.
+  - Try regularization techniques like Weight and Activity reglurization, which penalizes the model for too high of weight and activiation values. It is also possible to directly constrain the weight values for the model if we wished.
+  - Test different batch sizes. Smaller batches backpropogate training information more frequently than larger batches (eg. the model always knows the direction of gradient descent for smalled batches). Tweaking this may help training, but I suspect it is not the main root of our overfitting problem.
+
+
+Testing and combining these different options will help tune the model towards better performance. 
+
+**Including LIME**
+
+Using LIME is something that should also be included to help us evaluate models in the future. LIME allows us to see on the sample image which pixels weights are determined to be important and helps us confirm that the model is actually learning from pneumonia features and not just 'cheating' and using other nonsense background information to correctly classify images.
+
+##### Thanks for reading!
